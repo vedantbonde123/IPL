@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPL Fantasy 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #252535;
+    --accent: #f5c518;
+    --green: #2ed573;
+    --red: #ff4757;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --font-d: 'Bebas Neue', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+    --font-m: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-b); min-height: 100vh; }
+  body::before {
+    content: '';
+    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(245,197,24,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,71,87,0.04) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 0 20px 60px; }
+
+  header { display: flex; align-items: center; justify-content: space-between; padding: 24px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+  .logo { display: flex; align-items: baseline; gap: 14px; }
+  .logo-t { font-family: var(--font-d); font-size: 40px; letter-spacing: 2px; color: var(--accent); }
+  .logo-s { font-family: var(--font-m); font-size: 10px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+  .last-updated { font-family: var(--font-m); font-size: 11px; color: var(--muted); text-align: right; }
+  .last-updated span { color: var(--green); }
+
+  /* Leaderboard */
+  .lb { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 28px; }
+  @media(max-width:900px){ .lb { grid-template-columns: repeat(3,1fr); } }
+  @media(max-width:580px){ .lb { grid-template-columns: repeat(2,1fr); } }
+
+  .lb-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 14px; text-align: center; position: relative; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .lb-card:hover { transform: translateY(-2px); }
+  .lb-card.r1 { border-color: var(--accent); }
+  .lb-card.r1::after { content: '🏆'; position: absolute; top: 8px; right: 10px; font-size: 14px; }
+  .lb-card.r2 { border-color: #aaa; }
+  .lb-card.r3 { border-color: #cd7f32; }
+  .lb-rank { font-family: var(--font-m); font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-bottom: 4px; }
+  .lb-name { font-family: var(--font-d); font-size: 22px; letter-spacing: 1px; margin-bottom: 6px; }
+  .lb-pts { font-family: var(--font-m); font-size: 28px; font-weight: 600; color: var(--accent); }
+  .lb-sub { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+
+  /* Match badges */
+  .matches-played { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .match-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; font-family: var(--font-m); font-size: 11px; color: var(--muted);
+  }
+  .match-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  /* Export btn */
+  .top-actions { display: flex; gap: 10px; margin-bottom: 24px; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 6px; border: none; font-family: var(--font-b); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-export { background: var(--green); color: #000; }
+  .btn-export:hover { background: #7bed9f; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Owner blocks */
+  .owner-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .owner-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .owner-name { font-family: var(--font-d); font-size: 20px; letter-spacing: 1px; }
+  .owner-total { font-family: var(--font-m); font-size: 16px; font-weight: 600; color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 9px 16px; font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); }
+  td { padding: 9px 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .team-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-family: var(--font-m); font-size: 10px; font-weight: 600; background: var(--border); color: var(--muted); }
+
+  .pts-val { font-family: var(--font-m); font-size: 14px; font-weight: 600; }
+  .pts-pos { color: var(--green); }
+  .pts-zero { color: var(--muted); }
+
+  .match-pts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .mp { font-family: var(--font-m); font-size: 10px; padding: 2px 7px; border-radius: 3px; background: rgba(46,213,115,0.12); color: var(--green); border: 1px solid rgba(46,213,115,0.2); }
+  .mp.zero { background: rgba(255,255,255,0.04); color: var(--muted); border-color: transparent; }
+
+  .note { font-family: var(--font-m); font-size: 10px; color: var(--muted); margin-bottom: 24px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <span class="logo-t">IPL FANTASY 2026</span>
+      <span class="logo-s">Dream11 Points Tracker</span>
+    </div>
+    <div class="last-updated">Last updated<br><span>30 Mar 2026 — Matches 1 & 2</span></div>
+  </header>
+
+  <div class="matches-played">
+    <div class="match-badge"><span class="dot"></span> M1 · Mar 28 · RCB vs SRH · RCB won by 6 wkts</div>
+    <div class="match-badge"><span class="dot"></span> M2 · Mar 29 · MI vs KKR · MI won by 6 wkts</div>
+    <div class="match-badge" style="color:#f5c518; border-color:#3a3a20;">⏳ M3 · Mar 30 · RR vs CSK · Yet to begin</div>
+  </div>
+
+  <div class="note">
+    📊 Points calculated using Dream11 standard scoring: Batting (1pt/run, 1pt/4, 2pt/6, +8 for 50+, +16 for 100+, -2 duck), Bowling (25pt/wkt, +12 for 4wkt haul, +25 for 5wkt), Fielding (8pt/catch, 12pt/stumping), +4 playing XI. · Players not in playing XI score 0. · Will Jacks & Mitchell Santner rested for Match 2.
+  </div>
+
+  <div class="top-actions">
+    <button class="btn btn-export" onclick="exportXL()">⬇ Export Excel</button>
+  </div>
+
+  <div class="lb" id="lb"></div>
+  <div id="tables"></div>
+</div>
+
+<script>
+const ABBR = {
+  'Mumbai Indians':'MI','Chennai Super Kings':'CSK','Royal Challengers Bengaluru':'RCB',
+  'Kolkata Knight Riders':'KKR','Sunrisers Hyderabad':'SRH','Delhi Capitals':'DC',
+  'Punjab Kings':'PBKS','Gujarat Titans':'GT','Rajasthan Royals':'RR','Lucknow Super Giants':'LSG'
+};
+
+// Points per match: { playerName: [m1pts, m2pts, ...] }
+const PTS = {
+  // Match 1: RCB vs SRH (Mar 28)
+  "Virat Kohli":       [104, 0],
+  "Phil Salt":         [30,  0],
+  "Rajat Patidar":     [40,  0],
+  "Krunal Pandya":     [4,   0],
+  "Bhuvneshwar Kumar": [29,  0],
+  "Jacob Bethell":     [4,   0],
+  "Abhishek Sharma":   [13,  0],
+  "Travis Head":       [17,  0],
+  "Ishan Kishan":      [110, 0],
+  "Heinrich Klaasen":  [39,  0],
+  "Harshal Patel":     [2,   0],
+  // Match 2: MI vs KKR (Mar 29)
+  "Rohit Sharma":      [0, 108],
+  "Hardik Pandya":     [0,  53],
+  "Tilak Varma":       [0,  26],
+  "Suryakumar Yadav":  [0,  15],
+  "Jasprit Bumrah":    [0,   4],
+  "Trent Boult":       [0,   4],
+  "Finn Allen":        [0,  49],
+  "Ajinkya Rahane":    [0,  92],
+  "Cameron Green":     [0,  17],
+  "Angkrish Raghuvanshi": [0, 73],
+  "Sunil Narine":      [0,  29],
+  "Varun Chakravarthy":[0,   4],
+};
+
+const MATCHES = ["M1 Mar28", "M2 Mar29"];
+
+const DRAFT = {
+  "Vivek": [
+    {player:"Rohit Sharma", team:"Mumbai Indians"},
+    {player:"KL Rahul", team:"Delhi Capitals"},
+    {player:"Ishan Kishan", team:"Sunrisers Hyderabad"},
+    {player:"Arshdeep Singh", team:"Punjab Kings"},
+    {player:"Mitchell Marsh", team:"Lucknow Super Giants"},
+    {player:"Noor Ahmad", team:"Chennai Super Kings"},
+    {player:"Prabhsimran Singh", team:"Punjab Kings"},
+    {player:"Finn Allen", team:"Kolkata Knight Riders"},
+    {player:"Marco Jansen", team:"Punjab Kings"},
+    {player:"Rashid Khan", team:"Gujarat Titans"},
+    {player:"Nitish Rana", team:"Delhi Capitals"},
+    {player:"Lungi Ngidi", team:"Delhi Capitals"},
+    {player:"Jofra Archer", team:"Rajasthan Royals"},
+    {player:"Angkrish Raghuvanshi", team:"Kolkata Knight Riders"},
+    {player:"Prashant Veer", team:"Chennai Super Kings"},
+  ],
+  "Vedant": [
+    {player:"Virat Kohli", team:"Royal Challengers Bengaluru"},
+    {player:"Suryakumar Yadav", team:"Mumbai Indians"},
+    {player:"Shubman Gill", team:"Gujarat Titans"},
+    {player:"Nicholas Pooran", team:"Lucknow Super Giants"},
+    {player:"Rajat Patidar", team:"Royal Challengers Bengaluru"},
+    {player:"Jos Buttler", team:"Gujarat Titans"},
+    {player:"Mohammed Siraj", team:"Gujarat Titans"},
+    {player:"Priyansh Arya", team:"Punjab Kings"},
+    {player:"Sunil Narine", team:"Kolkata Knight Riders"},
+    {player:"Ajinkya Rahane", team:"Kolkata Knight Riders"},
+    {player:"Khaleel Ahmed", team:"Chennai Super Kings"},
+    {player:"Krunal Pandya", team:"Royal Challengers Bengaluru"},
+    {player:"Yuzvendra Chahal", team:"Punjab Kings"},
+    {player:"Ayush Badoni", team:"Lucknow Super Giants"},
+    {player:"Prithvi Shaw", team:"Delhi Capitals"},
+  ],
+  "Ayushman": [
+    {player:"Sanju Samson", team:"Chennai Super Kings"},
+    {player:"Hardik Pandya", team:"Mumbai Indians"},
+    {player:"Travis Head", team:"Sunrisers Hyderabad"},
+    {player:"Vaibhav Suryavanshi", team:"Rajasthan Royals"},
+    {player:"Axar Patel", team:"Delhi Capitals"},
+    {player:"Aiden Markram", team:"Lucknow Super Giants"},
+    {player:"Varun Chakravarthy", team:"Kolkata Knight Riders"},
+    {player:"Ravindra Jadeja", team:"Rajasthan Royals"},
+    {player:"Kuldeep Yadav", team:"Delhi Capitals"},
+    {player:"Shivam Dube", team:"Chennai Super Kings"},
+    {player:"Will Jacks", team:"Mumbai Indians"},
+    {player:"Quinton de Kock", team:"Mumbai Indians"},
+    {player:"Mitchell Santner", team:"Mumbai Indians"},
+    {player:"Washington Sundar", team:"Gujarat Titans"},
+    {player:"Deepak Chahar", team:"Mumbai Indians"},
+  ],
+  "Niranjan": [
+    {player:"Sai Sudharsan", team:"Gujarat Titans"},
+    {player:"Yashasvi Jaiswal", team:"Rajasthan Royals"},
+    {player:"Ruturaj Gaikwad", team:"Chennai Super Kings"},
+    {player:"Phil Salt", team:"Royal Challengers Bengaluru"},
+    {player:"Cameron Green", team:"Kolkata Knight Riders"},
+    {player:"Trent Boult", team:"Mumbai Indians"},
+    {player:"Riyan Parag", team:"Rajasthan Royals"},
+    {player:"Ayush Mhatre", team:"Chennai Super Kings"},
+    {player:"Harshal Patel", team:"Sunrisers Hyderabad"},
+    {player:"Tristan Stubbs", team:"Delhi Capitals"},
+    {player:"Kagiso Rabada", team:"Gujarat Titans"},
+    {player:"Dhruv Jurel", team:"Rajasthan Royals"},
+    {player:"Jacob Bethell", team:"Royal Challengers Bengaluru"},
+    {player:"Karun Nair", team:"Delhi Capitals"},
+    {player:"Marcus Stoinis", team:"Punjab Kings"},
+  ],
+  "Viraj": [
+    {player:"Jasprit Bumrah", team:"Mumbai Indians"},
+    {player:"Abhishek Sharma", team:"Sunrisers Hyderabad"},
+    {player:"Shreyas Iyer", team:"Punjab Kings"},
+    {player:"Rishabh Pant", team:"Lucknow Super Giants"},
+    {player:"Dewald Brevis", team:"Chennai Super Kings"},
+    {player:"Tilak Varma", team:"Mumbai Indians"},
+    {player:"Bhuvneshwar Kumar", team:"Royal Challengers Bengaluru"},
+    {player:"Shimron Hetmyer", team:"Rajasthan Royals"},
+    {player:"Heinrich Klaasen", team:"Sunrisers Hyderabad"},
+    {player:"Avesh Khan", team:"Lucknow Super Giants"},
+    {player:"Nehal Wadhera", team:"Punjab Kings"},
+    {player:"Prasidh Krishna", team:"Gujarat Titans"},
+    {player:"Shashank Singh", team:"Punjab Kings"},
+    {player:"Mohammad Shami", team:"Lucknow Super Giants"},
+    {player:"Pat Cummins", team:"Sunrisers Hyderabad"},
+  ]
+};
+
+function getTotal(player) {
+  return (PTS[player] || []).reduce((s,v) => s+v, 0);
+}
+
+function render() {
+  // Leaderboard
+  const totals = Object.entries(DRAFT).map(([o,ps]) => ({
+    owner: o, total: ps.reduce((s,p) => s + getTotal(p.player), 0)
+  })).sort((a,b) => b.total - a.total);
+
+  document.getElementById('lb').innerHTML = totals.map((t,i) => `
+    <div class="lb-card r${i+1}">
+      <div class="lb-rank">#${i+1}</div>
+      <div class="lb-name">${t.owner}</div>
+      <div class="lb-pts">${t.total}</div>
+      <div class="lb-sub">points</div>
+    </div>`).join('');
+
+  // Tables
+  document.getElementById('tables').innerHTML = Object.entries(DRAFT).map(([owner, players]) => {
+    const total = players.reduce((s,p) => s + getTotal(p.player), 0);
+    const rows = players.map(p => {
+      const matchPts = PTS[p.player] || [];
+      const tot = matchPts.reduce((s,v)=>s+v,0);
+      const badges = MATCHES.map((m,i) => {
+        const v = matchPts[i] || 0;
+        return `<span class="mp${v===0?' zero':''}">${m}: ${v}</span>`;
+      }).join('');
+      return `<tr>
+        <td>${p.player}</td>
+        <td><span class="team-badge">${ABBR[p.team]||p.team}</span></td>
+        <td><div class="match-pts">${badges}</div></td>
+        <td class="pts-val ${tot>0?'pts-pos':'pts-zero'}">${tot}</td>
+      </tr>`;
+    }).join('');
+    return `<div class="owner-block">
+      <div class="owner-head">
+        <span class="owner-name">${owner}</span>
+        <span class="owner-total">${total} pts</span>
+      </div>
+      <table>
+        <thead><tr><th>Player</th><th>Team</th><th>Match Breakdown</th><th>Total</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+function exportXL() {
+  const wb = XLSX.utils.book_new();
+  const owners = Object.keys(DRAFT);
+  const header = [];
+  owners.forEach(o => header.push(o, 'IPL Team', ...MATCHES, 'Total'));
+  const rows = [header];
+
+  const maxLen = Math.max(...owners.map(o => DRAFT[o].length));
+  for (let i = 0; i < maxLen; i++) {
+    const row = [];
+    owners.forEach(o => {
+      const p = DRAFT[o][i];
+      if (p) {
+        const pts = PTS[p.player] || [];
+        const tot = pts.reduce((s,v)=>s+v,0);
+        row.push(`${p.player}`, p.team, ...(MATCHES.map((_,idx)=>pts[idx]||0)), tot);
+      } else {
+        row.push('', '', ...MATCHES.map(()=>''), '');
+      }
+    });
+    rows.push(row);
+  }
+
+  // Totals row
+  const totRow = [];
+  owners.forEach(o => {
+    const matchTotals = MATCHES.map((_,mi) =>
+      DRAFT[o].reduce((s,p) => s + ((PTS[p.player]||[])[mi]||0), 0)
+    );
+    const grandTotal = DRAFT[o].reduce((s,p) => s + getTotal(p.player), 0);
+    totRow.push('TOTAL', '', ...matchTotals, grandTotal);
+  });
+  rows.push(totRow);
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const colCount = owners.length * (3 + MATCHES.length);
+  ws['!cols'] = Array(colCount).fill(null).map((_, i) => {
+    const mod = i % (3 + MATCHES.length);
+    return { wch: mod === 0 ? 26 : mod === 1 ? 24 : 11 };
+  });
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Fantasy Points');
+  XLSX.writeFile(wb, `ipl_fantasy_draft_2026_updated_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+render();
+</script>
+</body>
+</html>
