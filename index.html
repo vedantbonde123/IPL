@@ -4,381 +4,408 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IPL Fantasy 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --card: #1a1a26;
-    --border: #252535;
-    --accent: #f5c518;
-    --green: #2ed573;
-    --red: #ff4757;
-    --text: #e8e8f0;
-    --muted: #6b6b85;
-    --font-d: 'Bebas Neue', sans-serif;
-    --font-b: 'DM Sans', sans-serif;
-    --font-m: 'JetBrains Mono', monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-b); min-height: 100vh; }
-  body::before {
-    content: '';
-    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 20% 20%, rgba(245,197,24,0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(255,71,87,0.04) 0%, transparent 50%);
-    pointer-events: none; z-index: 0;
-  }
-  .wrap { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 0 20px 60px; }
+:root{--bg:#06060e;--s1:#0c0c1a;--s2:#121228;--s3:#1a1a38;--border:#1e1e42;--text:#f0f0ff;--muted:#5a5a8a;--fd:'Teko',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 60% at 15% 5%,rgba(99,102,241,0.12) 0%,transparent 55%),radial-gradient(ellipse 80% 50% at 85% 95%,rgba(236,72,153,0.1) 0%,transparent 50%),radial-gradient(ellipse 60% 40% at 50% 50%,rgba(245,197,24,0.04) 0%,transparent 60%);pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:1480px;margin:0 auto;padding:0 20px 80px}
 
-  header { display: flex; align-items: center; justify-content: space-between; padding: 24px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
-  .logo { display: flex; align-items: baseline; gap: 14px; }
-  .logo-t { font-family: var(--font-d); font-size: 40px; letter-spacing: 2px; color: var(--accent); }
-  .logo-s { font-family: var(--font-m); font-size: 10px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
-  .last-updated { font-family: var(--font-m); font-size: 11px; color: var(--muted); text-align: right; }
-  .last-updated span { color: var(--green); }
+/* HERO */
+.hero{position:relative;padding:36px 0 28px;margin-bottom:0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero-left{display:flex;align-items:center;gap:18px}
+.trophy-wrap{position:relative;flex-shrink:0}
+.trophy-glow{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,rgba(245,197,24,0.35),transparent 70%);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+.hero-title{font-family:var(--fd);font-size:52px;letter-spacing:4px;line-height:1;background:linear-gradient(135deg,#f5c518 0%,#ff6b35 50%,#ec4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-family:var(--fm);font-size:10px;letter-spacing:5px;color:var(--muted);margin-top:4px;text-transform:uppercase}
+.hero-right{display:flex;flex-wrap:wrap;gap:6px;max-width:580px}
+.mpill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;padding:5px 11px;font-family:var(--fm);font-size:10px;color:var(--muted);white-space:nowrap}
+.mpill .d{width:5px;height:5px;border-radius:50%;background:#00e676;box-shadow:0 0 6px #00e676}
 
-  /* Leaderboard */
-  .lb { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 28px; }
-  @media(max-width:900px){ .lb { grid-template-columns: repeat(3,1fr); } }
-  @media(max-width:580px){ .lb { grid-template-columns: repeat(2,1fr); } }
+/* TEAM BAR */
+.teams-bar{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:14px 20px;margin:20px 0 28px;background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow-x:auto}
+.teams-bar::-webkit-scrollbar{height:3px}.teams-bar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.tl{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;cursor:default;transition:transform .2s;padding:0 4px}
+.tl:hover{transform:translateY(-3px)}
+.tl-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid;font-family:var(--fd);font-size:11.5px;font-weight:600;transition:all .2s;letter-spacing:.5px}
+.tl:hover .tl-circle{box-shadow:0 0 16px currentColor}
+.tl-name{font-family:var(--fm);font-size:8px;letter-spacing:1px}
 
-  .lb-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 16px 14px; text-align: center; position: relative; overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .lb-card:hover { transform: translateY(-2px); }
-  .lb-card.r1 { border-color: var(--accent); }
-  .lb-card.r1::after { content: '🏆'; position: absolute; top: 8px; right: 10px; font-size: 14px; }
-  .lb-card.r2 { border-color: #aaa; }
-  .lb-card.r3 { border-color: #cd7f32; }
-  .lb-rank { font-family: var(--font-m); font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-bottom: 4px; }
-  .lb-name { font-family: var(--font-d); font-size: 22px; letter-spacing: 1px; margin-bottom: 6px; }
-  .lb-pts { font-family: var(--font-m); font-size: 28px; font-weight: 600; color: var(--accent); }
-  .lb-sub { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+/* LEADERBOARD */
+.sec-hd{font-family:var(--fm);font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-hd::after{content:'';flex:1;height:1px;background:var(--border)}
+.lb-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:32px}
+@media(max-width:860px){.lb-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.lb-row{grid-template-columns:repeat(2,1fr)}}
 
-  /* Match badges */
-  .matches-played { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-  .match-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-    padding: 6px 12px; font-family: var(--font-m); font-size: 11px; color: var(--muted);
-  }
-  .match-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.lb-card{position:relative;border-radius:16px;padding:22px 16px 18px;text-align:center;cursor:pointer;overflow:hidden;transition:transform .25s,box-shadow .25s}
+.lb-card::before{content:'';position:absolute;inset:0;border-radius:16px;padding:1px;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;background:var(--cg);pointer-events:none}
+.lb-card:hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.lb-card.r1{background:linear-gradient(160deg,#1a1200,#0d0d00);--cg:linear-gradient(135deg,#f5c518,#ff6b35)}
+.lb-card.r2{background:linear-gradient(160deg,#151520,#0d0d18);--cg:linear-gradient(135deg,#c0c0d0,#808090)}
+.lb-card.r3{background:linear-gradient(160deg,#130b00,#0c0800);--cg:linear-gradient(135deg,#cd7f32,#8b5a1a)}
+.lb-card.r4,.lb-card.r5{background:var(--s1);--cg:var(--border)}
+.lb-medal{font-size:28px;margin-bottom:6px;line-height:1;display:block}
+.lb-rank{font-family:var(--fm);font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:4px}
+.lb-name{font-family:var(--fd);font-size:30px;letter-spacing:1px;line-height:1;margin-bottom:8px}
+.lb-pts{font-family:var(--fd);font-size:42px;line-height:1;background:var(--pg,linear-gradient(135deg,#f5c518,#ff6b35));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lb-card.r2 .lb-pts{--pg:linear-gradient(135deg,#d0d0e0,#9090a8)}
+.lb-card.r3 .lb-pts{--pg:linear-gradient(135deg,#cd7f32,#e8a44a)}
+.lb-card.r4 .lb-pts,.lb-card.r5 .lb-pts{--pg:linear-gradient(135deg,#6060a0,#4040a0)}
+.lb-label{font-family:var(--fm);font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:2px}
+.lb-bars{display:flex;gap:3px;justify-content:center;align-items:flex-end;height:22px;margin-top:10px}
+.lb-bar{width:9px;border-radius:2px 2px 0 0;min-height:2px}
 
-  /* Export btn */
-  .top-actions { display: flex; gap: 10px; margin-bottom: 24px; }
-  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 6px; border: none; font-family: var(--font-b); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .btn-export { background: var(--green); color: #000; }
-  .btn-export:hover { background: #7bed9f; }
-  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+/* ACTIONS */
+.actions{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:10px;border:none;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-xl{background:linear-gradient(135deg,#00e676,#00c853);color:#000}
+.btn-xl:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,230,118,.3)}
+.vtog{display:flex;gap:3px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:3px;margin-left:auto}
+.vbtn{padding:6px 16px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-family:var(--fb);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+.vbtn.on{background:var(--s3);color:var(--text)}
 
-  /* Owner blocks */
-  .owner-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
-  .owner-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; background: var(--surface); border-bottom: 1px solid var(--border); }
-  .owner-name { font-family: var(--font-d); font-size: 20px; letter-spacing: 1px; }
-  .owner-total { font-family: var(--font-m); font-size: 16px; font-weight: 600; color: var(--accent); }
+/* OWNER BLOCK */
+.owner-block{margin-bottom:20px;border-radius:18px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s}
+.owner-block:hover{border-color:rgba(255,255,255,.08)}
+.owner-hd{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none;transition:background .2s;position:relative;background:var(--s1)}
+.owner-hd:hover{background:var(--s2)}
+.owner-hd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--border)}
+.oav{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:22px;font-weight:700}
+.oinfo{flex:1}
+.oname{font-family:var(--fd);font-size:24px;letter-spacing:1px;line-height:1}
+.ometa{font-family:var(--fm);font-size:10px;color:var(--muted);margin-top:2px}
+.opts{font-family:var(--fd);font-size:28px;background:linear-gradient(135deg,#f5c518,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.obadge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:15px}
+.b1{background:rgba(245,197,24,.15);color:#f5c518;border:1px solid rgba(245,197,24,.4)}
+.b2{background:rgba(192,192,192,.1);color:#c0c0c0;border:1px solid rgba(192,192,192,.3)}
+.b3{background:rgba(205,127,50,.1);color:#cd7f32;border:1px solid rgba(205,127,50,.3)}
+.b4,.b5{background:var(--s3);color:var(--muted);border:1px solid var(--border)}
+.chev{color:var(--muted);font-size:11px;transition:transform .3s;margin-left:6px}
+.chev.o{transform:rotate(180deg)}
 
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; padding: 9px 16px; font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); }
-  td { padding: 9px 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+/* PLAYER GRID */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1px;background:var(--border)}
+.pcard{background:var(--s1);padding:18px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:7px;transition:background .2s;cursor:default;position:relative;overflow:hidden}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,#444);opacity:0;transition:opacity .2s}
+.pcard:hover{background:var(--s2)}
+.pcard:hover::before{opacity:1}
+.pimg{width:72px;height:72px;border-radius:50%;overflow:hidden;border:2.5px solid var(--tc,#333);background:var(--s3);flex-shrink:0;position:relative;transition:box-shadow .3s}
+.pcard:hover .pimg{box-shadow:0 0 0 3px var(--tc,#333),0 0 20px rgba(255,255,255,.08)}
+.pimg img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.pimg .fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:24px;color:var(--muted);background:var(--s3)}
+.pname{font-size:12px;font-weight:600;text-align:center;line-height:1.3;color:var(--text)}
+.ptbadge{font-family:var(--fm);font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;border:1px solid var(--tc,#333);color:var(--tc,#888);background:rgba(255,255,255,.04);letter-spacing:.3px}
+.ptotal{font-family:var(--fd);font-size:22px;line-height:1;background:linear-gradient(135deg,#f5c518,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ptotal.z{-webkit-text-fill-color:var(--muted);background:none;font-size:18px}
+.mdots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.mdot{font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(0,230,118,.1);color:#00e676;border:1px solid rgba(0,230,118,.2)}
+.mdot.z{background:rgba(255,255,255,.03);color:var(--muted);border-color:transparent}
 
-  .team-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-family: var(--font-m); font-size: 10px; font-weight: 600; background: var(--border); color: var(--muted); }
+/* TABLE */
+.ptable{width:100%;border-collapse:collapse;display:none}
+.ptable th{padding:10px 16px;font-family:var(--fm);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);text-align:left}
+.ptable td{padding:10px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:rgba(255,255,255,.02)}
+.tcell{display:flex;align-items:center;gap:10px}
+.timg{width:36px;height:36px;border-radius:50%;overflow:hidden;border:1.5px solid var(--border);background:var(--s3);flex-shrink:0}
+.timg img{width:100%;height:100%;object-fit:cover;object-position:top}
 
-  .pts-val { font-family: var(--font-m); font-size: 14px; font-weight: 600; }
-  .pts-pos { color: var(--green); }
-  .pts-zero { color: var(--muted); }
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-  .match-pts { display: flex; gap: 6px; flex-wrap: wrap; }
-  .mp { font-family: var(--font-m); font-size: 10px; padding: 2px 7px; border-radius: 3px; background: rgba(46,213,115,0.12); color: var(--green); border: 1px solid rgba(46,213,115,0.2); }
-  .mp.zero { background: rgba(255,255,255,0.04); color: var(--muted); border-color: transparent; }
+footer{text-align:center;padding:28px 0 0;border-top:1px solid var(--border);margin-top:40px;font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:2px}
 
-  .note { font-family: var(--font-m); font-size: 10px; color: var(--muted); margin-bottom: 24px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; line-height: 1.6; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.lb-card{animation:fadeUp .5s ease both}
+.lb-card:nth-child(1){animation-delay:.05s}.lb-card:nth-child(2){animation-delay:.1s}
+.lb-card:nth-child(3){animation-delay:.15s}.lb-card:nth-child(4){animation-delay:.2s}
+.lb-card:nth-child(5){animation-delay:.25s}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="logo">
-      <span class="logo-t">IPL FANTASY 2026</span>
-      <span class="logo-s">Dream11 Points Tracker</span>
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="trophy-wrap">
+      <div class="trophy-glow"></div>
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <defs>
+          <linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f5c518"/><stop offset="50%" stop-color="#ff6b35"/><stop offset="100%" stop-color="#ec4899"/>
+          </linearGradient>
+        </defs>
+        <path d="M18 12 L42 12 L39 40 L21 40 Z" fill="url(#tg)" opacity=".9"/>
+        <path d="M18 19 Q8 19 8 28 Q8 35 18 35" fill="none" stroke="url(#tg)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M42 19 Q52 19 52 28 Q52 35 42 35" fill="none" stroke="url(#tg)" stroke-width="3" stroke-linecap="round"/>
+        <rect x="23" y="40" width="14" height="4" rx="2" fill="url(#tg)"/>
+        <rect x="18" y="44" width="24" height="4" rx="2" fill="url(#tg)"/>
+        <polygon points="30,17 31.5,22 37,22 32.5,25 34,30 30,27 26,30 27.5,25 23,22 28.5,22" fill="rgba(255,255,255,0.25)"/>
+      </svg>
     </div>
-    <div class="last-updated">Last updated<br><span>30 Mar 2026 — Matches 1 & 2</span></div>
-  </header>
-
-  <div class="matches-played">
-    <div class="match-badge"><span class="dot"></span> M1 · Mar 28 · RCB vs SRH · RCB won by 6 wkts</div>
-    <div class="match-badge"><span class="dot"></span> M2 · Mar 29 · MI vs KKR · MI won by 6 wkts</div>
-    <div class="match-badge" style="color:#f5c518; border-color:#3a3a20;">⏳ M3 · Mar 30 · RR vs CSK · Yet to begin</div>
+    <div>
+      <div class="hero-title">IPL FANTASY 2026</div>
+      <div class="hero-sub">Dream11 Points Tracker · 4 Matches Played</div>
+    </div>
   </div>
-
-  <div class="note">
-    📊 Points calculated using Dream11 standard scoring: Batting (1pt/run, 1pt/4, 2pt/6, +8 for 50+, +16 for 100+, -2 duck), Bowling (25pt/wkt, +12 for 4wkt haul, +25 for 5wkt), Fielding (8pt/catch, 12pt/stumping), +4 playing XI. · Players not in playing XI score 0. · Will Jacks & Mitchell Santner rested for Match 2.
+  <div class="hero-right">
+    <div class="mpill"><span class="d"></span>M1 · Mar 28 · RCB beat SRH</div>
+    <div class="mpill"><span class="d"></span>M2 · Mar 29 · MI beat KKR</div>
+    <div class="mpill"><span class="d"></span>M3 · Mar 30 · RR beat CSK</div>
+    <div class="mpill"><span class="d"></span>M4 · Mar 31 · PBKS beat GT</div>
   </div>
+</div>
 
-  <div class="top-actions">
-    <button class="btn btn-export" onclick="exportXL()">⬇ Export Excel</button>
+<div class="teams-bar" id="teamBar"></div>
+
+<div class="sec-hd">Standings</div>
+<div class="lb-row" id="lb"></div>
+
+<div class="actions">
+  <button class="btn btn-xl" onclick="exportXL()">⬇ Export Excel</button>
+  <div class="vtog">
+    <button class="vbtn on" id="vc" onclick="setView('cards')">Cards</button>
+    <button class="vbtn" id="vt" onclick="setView('table')">Table</button>
   </div>
+</div>
 
-  <div class="lb" id="lb"></div>
-  <div id="tables"></div>
+<div class="sec-hd">All Players</div>
+<div id="owners"></div>
+
+<footer>IPL FANTASY 2026 · DREAM11 SCORING · UPDATED THROUGH MATCH 4 · MAR 31 2026</footer>
 </div>
 
 <script>
-const ABBR = {
-  'Mumbai Indians':'MI','Chennai Super Kings':'CSK','Royal Challengers Bengaluru':'RCB',
-  'Kolkata Knight Riders':'KKR','Sunrisers Hyderabad':'SRH','Delhi Capitals':'DC',
-  'Punjab Kings':'PBKS','Gujarat Titans':'GT','Rajasthan Royals':'RR','Lucknow Super Giants':'LSG'
+const T={
+  'Mumbai Indians':{a:'MI',c:'#0050B9',cl:'rgba(0,80,185,0.2)'},
+  'Chennai Super Kings':{a:'CSK',c:'#FFB800',cl:'rgba(255,184,0,0.2)'},
+  'Royal Challengers Bengaluru':{a:'RCB',c:'#E8001B',cl:'rgba(232,0,27,0.2)'},
+  'Kolkata Knight Riders':{a:'KKR',c:'#AA00FF',cl:'rgba(170,0,255,0.2)'},
+  'Sunrisers Hyderabad':{a:'SRH',c:'#FF6D00',cl:'rgba(255,109,0,0.2)'},
+  'Delhi Capitals':{a:'DC',c:'#1565C0',cl:'rgba(21,101,192,0.2)'},
+  'Punjab Kings':{a:'PBKS',c:'#E53935',cl:'rgba(229,57,53,0.2)'},
+  'Gujarat Titans':{a:'GT',c:'#00ACC1',cl:'rgba(0,172,193,0.2)'},
+  'Rajasthan Royals':{a:'RR',c:'#E91E8C',cl:'rgba(233,30,140,0.2)'},
+  'Lucknow Super Giants':{a:'LSG',c:'#00C853',cl:'rgba(0,200,83,0.2)'},
 };
 
-const MATCHES = ["M1 Mar28", "M2 Mar29", "M3 Mar30", "M4 Mar31"];
-
-const PTS = {
-  // M1: RCB vs SRH
-  "Virat Kohli":            [104,  0,  0,  0],
-  "Phil Salt":              [ 30,  0,  0,  0],
-  "Rajat Patidar":          [ 40,  0,  0,  0],
-  "Krunal Pandya":          [  4,  0,  0,  0],
-  "Bhuvneshwar Kumar":      [ 29,  0,  0,  0],
-  "Jacob Bethell":          [  4,  0,  0,  0],
-  "Abhishek Sharma":        [ 13,  0,  0,  0],
-  "Travis Head":            [ 17,  0,  0,  0],
-  "Ishan Kishan":           [110,  0,  0,  0],
-  "Heinrich Klaasen":       [ 39,  0,  0,  0],
-  "Harshal Patel":          [  2,  0,  0,  0],
-  // M2: MI vs KKR
-  "Rohit Sharma":           [  0,108,  0,  0],
-  "Hardik Pandya":          [  0, 53,  0,  0],
-  "Tilak Varma":            [  0, 26,  0,  0],
-  "Suryakumar Yadav":       [  0, 15,  0,  0],
-  "Jasprit Bumrah":         [  0,  4,  0,  0],
-  "Trent Boult":            [  0,  4,  0,  0],
-  "Finn Allen":             [  0, 49,  0,  0],
-  "Ajinkya Rahane":         [  0, 92,  0,  0],
-  "Cameron Green":          [  0, 17,  0,  0],
-  "Angkrish Raghuvanshi":   [  0, 73,  0,  0],
-  "Sunil Narine":           [  0, 29,  0,  0],
-  "Varun Chakravarthy":     [  0,  4,  0,  0],
-  // M3: RR vs CSK
-  "Vaibhav Suryavanshi":    [  0,  0, 78,  0],
-  "Jofra Archer":           [  0,  0, 54,  0],
-  "Ravindra Jadeja":        [  0,  0, 54,  0],
-  "Yashasvi Jaiswal":       [  0,  0, 47,  0],
-  "Dhruv Jurel":            [  0,  0, 34,  0],
-  "Riyan Parag":            [  0,  0, 21,  0],
-  "Shivam Dube":            [  0,  0, 12,  0],
-  "Sanju Samson":           [  0,  0, 10,  0],
-  "Ruturaj Gaikwad":        [  0,  0, 10,  0],
-  "Noor Ahmad":             [  0,  0,  5,  0],
-  "Khaleel Ahmed":          [  0,  0,  4,  0],
-  "Ayush Mhatre":           [  0,  0,  2,  0],
-  // M4: PBKS vs GT
-  "Prasidh Krishna":        [  0,  0,  0, 79],
-  "Shubman Gill":           [  0,  0,  0, 49],
-  "Prabhsimran Singh":      [  0,  0,  0, 48],
-  "Jos Buttler":            [  0,  0,  0, 47],
-  "Marco Jansen":           [  0,  0,  0, 44],
-  "Kagiso Rabada":          [  0,  0,  0, 29],
-  "Yuzvendra Chahal":       [  0,  0,  0, 29],
-  "Washington Sundar":      [  0,  0,  0, 25],
-  "Shreyas Iyer":           [  0,  0,  0, 25],
-  "Sai Sudharsan":          [  0,  0,  0, 18],
-  "Nehal Wadhera":          [  0,  0,  0, 12],
-  "Priyansh Arya":          [  0,  0,  0, 12],
-  "Shashank Singh":         [  0,  0,  0,  8],
-  "Arshdeep Singh":         [  0,  0,  0,  4],
-  "Rashid Khan":            [  0,  0,  0,  4],
-  "Mohammed Siraj":         [  0,  0,  0,  4],
-  "Marcus Stoinis":         [  0,  0,  0,  2],
+// Wikipedia page titles for each player (Wikipedia API has CORS: * so works from any domain)
+const WIKI_TITLES={
+  "Virat Kohli":"Virat_Kohli","Rohit Sharma":"Rohit_Sharma","Jasprit Bumrah":"Jasprit_Bumrah",
+  "Hardik Pandya":"Hardik_Pandya","Suryakumar Yadav":"Suryakumar_Yadav","Shubman Gill":"Shubman_Gill",
+  "Yashasvi Jaiswal":"Yashasvi_Jaiswal","Ravindra Jadeja":"Ravindra_Jadeja","KL Rahul":"KL_Rahul",
+  "Rishabh Pant":"Rishabh_Pant","Shreyas Iyer":"Shreyas_Iyer","Ishan Kishan":"Ishan_Kishan",
+  "Yuzvendra Chahal":"Yuzvendra_Chahal","Rashid Khan":"Rashid_Khan_(cricketer)","Trent Boult":"Trent_Boult",
+  "Kagiso Rabada":"Kagiso_Rabada","Jofra Archer":"Jofra_Archer","Jos Buttler":"Jos_Buttler",
+  "Sunil Narine":"Sunil_Narine","Ajinkya Rahane":"Ajinkya_Rahane","Ruturaj Gaikwad":"Ruturaj_Gaikwad",
+  "Sanju Samson":"Sanju_Samson","Travis Head":"Travis_Head_(cricketer)","Heinrich Klaasen":"Heinrich_Klaasen",
+  "Phil Salt":"Phil_Salt_(cricketer)","Rajat Patidar":"Rajat_Patidar","Axar Patel":"Axar_Patel",
+  "Bhuvneshwar Kumar":"Bhuvneshwar_Kumar","Kuldeep Yadav":"Kuldeep_Yadav","Arshdeep Singh":"Arshdeep_Singh",
+  "Prasidh Krishna":"Prasidh_Krishna","Deepak Chahar":"Deepak_Chahar","Mohammed Siraj":"Mohammed_Siraj",
+  "Mohammad Shami":"Mohammad_Shami","Pat Cummins":"Pat_Cummins","Shimron Hetmyer":"Shimron_Hetmyer",
+  "Quinton de Kock":"Quinton_de_Kock","Nicholas Pooran":"Nicholas_Pooran","Marcus Stoinis":"Marcus_Stoinis",
+  "Sai Sudharsan":"Sai_Sudharsan","Riyan Parag":"Riyan_Parag","Dhruv Jurel":"Dhruv_Jurel",
+  "Krunal Pandya":"Krunal_Pandya","Finn Allen":"Finn_Allen_(cricketer)","Washington Sundar":"Washington_Sundar",
+  "Vaibhav Suryavanshi":"Vaibhav_Suryavanshi","Mitchell Marsh":"Mitchell_Marsh_(cricketer)",
+  "Tilak Varma":"Tilak_Varma","Shivam Dube":"Shivam_Dube","Angkrish Raghuvanshi":"Angkrish_Raghuvanshi",
+  "Prabhsimran Singh":"Prabhsimran_Singh","Aiden Markram":"Aiden_Markram","Prithvi Shaw":"Prithvi_Shaw",
+  "Khaleel Ahmed":"Khaleel_Ahmed","Priyansh Arya":"Priyansh_Arya","Shashank Singh":"Shashank_Singh_(cricketer)",
+  "Nehal Wadhera":"Nehal_Wadhera","Marco Jansen":"Marco_Jansen_(cricketer)","Noor Ahmad":"Noor_Ahmad_(cricketer)",
+  "Mitchell Santner":"Mitchell_Santner","Avesh Khan":"Avesh_Khan","Lungi Ngidi":"Lungi_Ngidi",
+  "Varun Chakravarthy":"Varun_Chakravarthy_(cricketer)","Abhishek Sharma":"Abhishek_Sharma_(cricketer)",
+  "Ayush Badoni":"Ayush_Badoni","Harshal Patel":"Harshal_Patel","Karun Nair":"Karun_Nair",
+  "Nitish Rana":"Nitish_Rana","Jacob Bethell":"Jacob_Bethell","Ayush Mhatre":"Ayush_Mhatre",
+  "Tristan Stubbs":"Tristan_Stubbs","Dewald Brevis":"Dewald_Brevis","Will Jacks":"Will_Jacks_(cricketer)",
+  "Prashant Veer":"Prashant_Veer","Cameron Green":"Cameron_Green_(cricketer)",
+  "Mitchell Marsh":"Mitchell_Marsh_(cricketer)","Aiden Markram":"Aiden_Markram",
 };
 
-const DRAFT = {
-  "Vivek": [
-    {player:"Rohit Sharma", team:"Mumbai Indians"},
-    {player:"KL Rahul", team:"Delhi Capitals"},
-    {player:"Ishan Kishan", team:"Sunrisers Hyderabad"},
-    {player:"Arshdeep Singh", team:"Punjab Kings"},
-    {player:"Mitchell Marsh", team:"Lucknow Super Giants"},
-    {player:"Noor Ahmad", team:"Chennai Super Kings"},
-    {player:"Prabhsimran Singh", team:"Punjab Kings"},
-    {player:"Finn Allen", team:"Kolkata Knight Riders"},
-    {player:"Marco Jansen", team:"Punjab Kings"},
-    {player:"Rashid Khan", team:"Gujarat Titans"},
-    {player:"Nitish Rana", team:"Delhi Capitals"},
-    {player:"Lungi Ngidi", team:"Delhi Capitals"},
-    {player:"Jofra Archer", team:"Rajasthan Royals"},
-    {player:"Angkrish Raghuvanshi", team:"Kolkata Knight Riders"},
-    {player:"Prashant Veer", team:"Chennai Super Kings"},
-  ],
-  "Vedant": [
-    {player:"Virat Kohli", team:"Royal Challengers Bengaluru"},
-    {player:"Suryakumar Yadav", team:"Mumbai Indians"},
-    {player:"Shubman Gill", team:"Gujarat Titans"},
-    {player:"Nicholas Pooran", team:"Lucknow Super Giants"},
-    {player:"Rajat Patidar", team:"Royal Challengers Bengaluru"},
-    {player:"Jos Buttler", team:"Gujarat Titans"},
-    {player:"Mohammed Siraj", team:"Gujarat Titans"},
-    {player:"Priyansh Arya", team:"Punjab Kings"},
-    {player:"Sunil Narine", team:"Kolkata Knight Riders"},
-    {player:"Ajinkya Rahane", team:"Kolkata Knight Riders"},
-    {player:"Khaleel Ahmed", team:"Chennai Super Kings"},
-    {player:"Krunal Pandya", team:"Royal Challengers Bengaluru"},
-    {player:"Yuzvendra Chahal", team:"Punjab Kings"},
-    {player:"Ayush Badoni", team:"Lucknow Super Giants"},
-    {player:"Prithvi Shaw", team:"Delhi Capitals"},
-  ],
-  "Ayushman": [
-    {player:"Sanju Samson", team:"Chennai Super Kings"},
-    {player:"Hardik Pandya", team:"Mumbai Indians"},
-    {player:"Travis Head", team:"Sunrisers Hyderabad"},
-    {player:"Vaibhav Suryavanshi", team:"Rajasthan Royals"},
-    {player:"Axar Patel", team:"Delhi Capitals"},
-    {player:"Aiden Markram", team:"Lucknow Super Giants"},
-    {player:"Varun Chakravarthy", team:"Kolkata Knight Riders"},
-    {player:"Ravindra Jadeja", team:"Rajasthan Royals"},
-    {player:"Kuldeep Yadav", team:"Delhi Capitals"},
-    {player:"Shivam Dube", team:"Chennai Super Kings"},
-    {player:"Will Jacks", team:"Mumbai Indians"},
-    {player:"Quinton de Kock", team:"Mumbai Indians"},
-    {player:"Mitchell Santner", team:"Mumbai Indians"},
-    {player:"Washington Sundar", team:"Gujarat Titans"},
-    {player:"Deepak Chahar", team:"Mumbai Indians"},
-  ],
-  "Niranjan": [
-    {player:"Sai Sudharsan", team:"Gujarat Titans"},
-    {player:"Yashasvi Jaiswal", team:"Rajasthan Royals"},
-    {player:"Ruturaj Gaikwad", team:"Chennai Super Kings"},
-    {player:"Phil Salt", team:"Royal Challengers Bengaluru"},
-    {player:"Cameron Green", team:"Kolkata Knight Riders"},
-    {player:"Trent Boult", team:"Mumbai Indians"},
-    {player:"Riyan Parag", team:"Rajasthan Royals"},
-    {player:"Ayush Mhatre", team:"Chennai Super Kings"},
-    {player:"Harshal Patel", team:"Sunrisers Hyderabad"},
-    {player:"Tristan Stubbs", team:"Delhi Capitals"},
-    {player:"Kagiso Rabada", team:"Gujarat Titans"},
-    {player:"Dhruv Jurel", team:"Rajasthan Royals"},
-    {player:"Jacob Bethell", team:"Royal Challengers Bengaluru"},
-    {player:"Karun Nair", team:"Delhi Capitals"},
-    {player:"Marcus Stoinis", team:"Punjab Kings"},
-  ],
-  "Viraj": [
-    {player:"Jasprit Bumrah", team:"Mumbai Indians"},
-    {player:"Abhishek Sharma", team:"Sunrisers Hyderabad"},
-    {player:"Shreyas Iyer", team:"Punjab Kings"},
-    {player:"Rishabh Pant", team:"Lucknow Super Giants"},
-    {player:"Dewald Brevis", team:"Chennai Super Kings"},
-    {player:"Tilak Varma", team:"Mumbai Indians"},
-    {player:"Bhuvneshwar Kumar", team:"Royal Challengers Bengaluru"},
-    {player:"Shimron Hetmyer", team:"Rajasthan Royals"},
-    {player:"Heinrich Klaasen", team:"Sunrisers Hyderabad"},
-    {player:"Avesh Khan", team:"Lucknow Super Giants"},
-    {player:"Nehal Wadhera", team:"Punjab Kings"},
-    {player:"Prasidh Krishna", team:"Gujarat Titans"},
-    {player:"Shashank Singh", team:"Punjab Kings"},
-    {player:"Mohammad Shami", team:"Lucknow Super Giants"},
-    {player:"Pat Cummins", team:"Sunrisers Hyderabad"},
-  ]
-};
+// Image cache - populated via Wikipedia API
+// Build reverse map: "virat_kohli_(cricketer)" → "Virat Kohli"
+const TITLE_TO_PLAYER={};
+Object.entries(WIKI_TITLES).forEach(([p,t])=>TITLE_TO_PLAYER[t.toLowerCase()]=p);
 
-function getTotal(player) {
-  return (PTS[player] || []).reduce((s,v) => s+v, 0);
+const IMG_CACHE={};
+
+async function fetchAllImages(){
+  const players=Object.keys(WIKI_TITLES);
+  const batchSize=20;
+  for(let i=0;i<players.length;i+=batchSize){
+    const batch=players.slice(i,i+batchSize);
+    // build title→player lookup for this batch
+    const t2p={};
+    batch.forEach(p=>{t2p[WIKI_TITLES[p]]=p; t2p[WIKI_TITLES[p].replace(/_/g,' ')]=p;});
+    const titles=batch.map(p=>WIKI_TITLES[p]).join('|');
+    try{
+      const url=`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(titles)}&prop=pageimages&format=json&pithumbsize=150&origin=*`;
+      const r=await fetch(url);const d=await r.json();
+      // Handle redirects/normalizations
+      const norm={};
+      (d.query?.normalized||[]).forEach(n=>{norm[n.to]=n.from;norm[n.to.replace(/ /g,'_')]=n.from});
+      (d.query?.redirects||[]).forEach(n=>{norm[n.to]=n.from;norm[n.to.replace(/ /g,'_')]=n.from});
+      Object.values(d.query?.pages||{}).forEach(page=>{
+        if(!page.thumbnail?.source) return;
+        const ptitle=page.title; // "Virat Kohli"
+        const punder=ptitle.replace(/ /g,'_'); // "Virat_Kohli"
+        // Try direct title match first
+        let player=t2p[ptitle]||t2p[punder];
+        // Try via normalization chain
+        if(!player){const orig=norm[ptitle]||norm[punder];if(orig)player=t2p[orig]||t2p[orig.replace(/ /g,'_')];}
+        // Fallback: match by first word of title (catches "(cricketer)" variants)
+        if(!player){const fw=punder.split('_')[0].toLowerCase();const found=batch.find(p=>p.split(' ')[0].toLowerCase()===fw&&!IMG_CACHE[p]);if(found)player=found;}
+        if(player) IMG_CACHE[player]=page.thumbnail.source;
+      });
+    }catch(e){}
+  }
+  renderOwners();
 }
 
-function render() {
-  // Leaderboard
-  const totals = Object.entries(DRAFT).map(([o,ps]) => ({
-    owner: o, total: ps.reduce((s,p) => s + getTotal(p.player), 0)
-  })).sort((a,b) => b.total - a.total);
+const img=n=>IMG_CACHE[n]||null;
 
-  document.getElementById('lb').innerHTML = totals.map((t,i) => `
-    <div class="lb-card r${i+1}">
-      <div class="lb-rank">#${i+1}</div>
-      <div class="lb-name">${t.owner}</div>
-      <div class="lb-pts">${t.total}</div>
-      <div class="lb-sub">points</div>
+const MATCHES=["M1","M2","M3","M4"];
+const MLABELS=["M1 Mar28","M2 Mar29","M3 Mar30","M4 Mar31"];
+const PTS={
+  "Virat Kohli":[104,0,0,0],"Phil Salt":[30,0,0,0],"Rajat Patidar":[40,0,0,0],
+  "Krunal Pandya":[4,0,0,0],"Bhuvneshwar Kumar":[29,0,0,0],"Jacob Bethell":[4,0,0,0],
+  "Abhishek Sharma":[13,0,0,0],"Travis Head":[17,0,0,0],"Ishan Kishan":[110,0,0,0],
+  "Heinrich Klaasen":[39,0,0,0],"Harshal Patel":[2,0,0,0],
+  "Rohit Sharma":[0,108,0,0],"Hardik Pandya":[0,53,0,0],"Tilak Varma":[0,26,0,0],
+  "Suryakumar Yadav":[0,15,0,0],"Jasprit Bumrah":[0,4,0,0],"Trent Boult":[0,4,0,0],
+  "Finn Allen":[0,49,0,0],"Ajinkya Rahane":[0,92,0,0],"Cameron Green":[0,17,0,0],
+  "Angkrish Raghuvanshi":[0,73,0,0],"Sunil Narine":[0,29,0,0],"Varun Chakravarthy":[0,4,0,0],
+  "Vaibhav Suryavanshi":[0,0,78,0],"Jofra Archer":[0,0,54,0],"Ravindra Jadeja":[0,0,54,0],
+  "Yashasvi Jaiswal":[0,0,47,0],"Dhruv Jurel":[0,0,34,0],"Riyan Parag":[0,0,21,0],
+  "Shivam Dube":[0,0,12,0],"Sanju Samson":[0,0,10,0],"Ruturaj Gaikwad":[0,0,10,0],
+  "Noor Ahmad":[0,0,5,0],"Khaleel Ahmed":[0,0,4,0],"Ayush Mhatre":[0,0,2,0],
+  "Prasidh Krishna":[0,0,0,79],"Shubman Gill":[0,0,0,49],"Prabhsimran Singh":[0,0,0,48],
+  "Jos Buttler":[0,0,0,47],"Marco Jansen":[0,0,0,44],"Kagiso Rabada":[0,0,0,29],
+  "Yuzvendra Chahal":[0,0,0,29],"Washington Sundar":[0,0,0,25],"Shreyas Iyer":[0,0,0,25],
+  "Sai Sudharsan":[0,0,0,18],"Nehal Wadhera":[0,0,0,12],"Priyansh Arya":[0,0,0,12],
+  "Shashank Singh":[0,0,0,8],"Arshdeep Singh":[0,0,0,4],"Rashid Khan":[0,0,0,4],
+  "Mohammed Siraj":[0,0,0,4],"Marcus Stoinis":[0,0,0,2],
+};
+
+const DRAFT={
+  "Vivek":[{p:"Rohit Sharma",t:"Mumbai Indians"},{p:"KL Rahul",t:"Delhi Capitals"},{p:"Ishan Kishan",t:"Sunrisers Hyderabad"},{p:"Arshdeep Singh",t:"Punjab Kings"},{p:"Mitchell Marsh",t:"Lucknow Super Giants"},{p:"Noor Ahmad",t:"Chennai Super Kings"},{p:"Prabhsimran Singh",t:"Punjab Kings"},{p:"Finn Allen",t:"Kolkata Knight Riders"},{p:"Marco Jansen",t:"Punjab Kings"},{p:"Rashid Khan",t:"Gujarat Titans"},{p:"Nitish Rana",t:"Delhi Capitals"},{p:"Lungi Ngidi",t:"Delhi Capitals"},{p:"Jofra Archer",t:"Rajasthan Royals"},{p:"Angkrish Raghuvanshi",t:"Kolkata Knight Riders"},{p:"Prashant Veer",t:"Chennai Super Kings"}],
+  "Vedant":[{p:"Virat Kohli",t:"Royal Challengers Bengaluru"},{p:"Suryakumar Yadav",t:"Mumbai Indians"},{p:"Shubman Gill",t:"Gujarat Titans"},{p:"Nicholas Pooran",t:"Lucknow Super Giants"},{p:"Rajat Patidar",t:"Royal Challengers Bengaluru"},{p:"Jos Buttler",t:"Gujarat Titans"},{p:"Mohammed Siraj",t:"Gujarat Titans"},{p:"Priyansh Arya",t:"Punjab Kings"},{p:"Sunil Narine",t:"Kolkata Knight Riders"},{p:"Ajinkya Rahane",t:"Kolkata Knight Riders"},{p:"Khaleel Ahmed",t:"Chennai Super Kings"},{p:"Krunal Pandya",t:"Royal Challengers Bengaluru"},{p:"Yuzvendra Chahal",t:"Punjab Kings"},{p:"Ayush Badoni",t:"Lucknow Super Giants"},{p:"Prithvi Shaw",t:"Delhi Capitals"}],
+  "Ayushman":[{p:"Sanju Samson",t:"Chennai Super Kings"},{p:"Hardik Pandya",t:"Mumbai Indians"},{p:"Travis Head",t:"Sunrisers Hyderabad"},{p:"Vaibhav Suryavanshi",t:"Rajasthan Royals"},{p:"Axar Patel",t:"Delhi Capitals"},{p:"Aiden Markram",t:"Lucknow Super Giants"},{p:"Varun Chakravarthy",t:"Kolkata Knight Riders"},{p:"Ravindra Jadeja",t:"Rajasthan Royals"},{p:"Kuldeep Yadav",t:"Delhi Capitals"},{p:"Shivam Dube",t:"Chennai Super Kings"},{p:"Will Jacks",t:"Mumbai Indians"},{p:"Quinton de Kock",t:"Mumbai Indians"},{p:"Mitchell Santner",t:"Mumbai Indians"},{p:"Washington Sundar",t:"Gujarat Titans"},{p:"Deepak Chahar",t:"Mumbai Indians"}],
+  "Niranjan":[{p:"Sai Sudharsan",t:"Gujarat Titans"},{p:"Yashasvi Jaiswal",t:"Rajasthan Royals"},{p:"Ruturaj Gaikwad",t:"Chennai Super Kings"},{p:"Phil Salt",t:"Royal Challengers Bengaluru"},{p:"Cameron Green",t:"Kolkata Knight Riders"},{p:"Trent Boult",t:"Mumbai Indians"},{p:"Riyan Parag",t:"Rajasthan Royals"},{p:"Ayush Mhatre",t:"Chennai Super Kings"},{p:"Harshal Patel",t:"Sunrisers Hyderabad"},{p:"Tristan Stubbs",t:"Delhi Capitals"},{p:"Kagiso Rabada",t:"Gujarat Titans"},{p:"Dhruv Jurel",t:"Rajasthan Royals"},{p:"Jacob Bethell",t:"Royal Challengers Bengaluru"},{p:"Karun Nair",t:"Delhi Capitals"},{p:"Marcus Stoinis",t:"Punjab Kings"}],
+  "Viraj":[{p:"Jasprit Bumrah",t:"Mumbai Indians"},{p:"Abhishek Sharma",t:"Sunrisers Hyderabad"},{p:"Shreyas Iyer",t:"Punjab Kings"},{p:"Rishabh Pant",t:"Lucknow Super Giants"},{p:"Dewald Brevis",t:"Chennai Super Kings"},{p:"Tilak Varma",t:"Mumbai Indians"},{p:"Bhuvneshwar Kumar",t:"Royal Challengers Bengaluru"},{p:"Shimron Hetmyer",t:"Rajasthan Royals"},{p:"Heinrich Klaasen",t:"Sunrisers Hyderabad"},{p:"Avesh Khan",t:"Lucknow Super Giants"},{p:"Nehal Wadhera",t:"Punjab Kings"},{p:"Prasidh Krishna",t:"Gujarat Titans"},{p:"Shashank Singh",t:"Punjab Kings"},{p:"Mohammad Shami",t:"Lucknow Super Giants"},{p:"Pat Cummins",t:"Sunrisers Hyderabad"}],
+};
+
+const OC={
+  "Vivek":{bg:"linear-gradient(135deg,#f5c518,#ff6b35)",fg:"#000"},
+  "Vedant":{bg:"linear-gradient(135deg,#6366f1,#ec4899)",fg:"#fff"},
+  "Ayushman":{bg:"linear-gradient(135deg,#06b6d4,#3b82f6)",fg:"#fff"},
+  "Niranjan":{bg:"linear-gradient(135deg,#10b981,#06b6d4)",fg:"#fff"},
+  "Viraj":{bg:"linear-gradient(135deg,#f59e0b,#ef4444)",fg:"#fff"},
+};
+
+const tot=n=>(PTS[n]||[]).reduce((s,v)=>s+v,0);
+const oTot=o=>DRAFT[o].reduce((s,p)=>s+tot(p.p),0);
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+let view='cards';
+const col={};
+
+function renderTeamBar(){
+  document.getElementById('teamBar').innerHTML=Object.entries(T).map(([,t])=>`
+    <div class="tl">
+      <div class="tl-circle" style="border-color:${t.c};color:${t.c};background:${t.cl}">${t.a}</div>
+      <span class="tl-name" style="color:${t.c}">${t.a}</span>
     </div>`).join('');
+}
 
-  // Tables
-  document.getElementById('tables').innerHTML = Object.entries(DRAFT).map(([owner, players]) => {
-    const total = players.reduce((s,p) => s + getTotal(p.player), 0);
-    const rows = players.map(p => {
-      const matchPts = PTS[p.player] || [];
-      const tot = matchPts.reduce((s,v)=>s+v,0);
-      const badges = MATCHES.map((m,i) => {
-        const v = matchPts[i] || 0;
-        return `<span class="mp${v===0?' zero':''}">${m}: ${v}</span>`;
-      }).join('');
-      return `<tr>
-        <td>${p.player}</td>
-        <td><span class="team-badge">${ABBR[p.team]||p.team}</span></td>
-        <td><div class="match-pts">${badges}</div></td>
-        <td class="pts-val ${tot>0?'pts-pos':'pts-zero'}">${tot}</td>
-      </tr>`;
-    }).join('');
-    return `<div class="owner-block">
-      <div class="owner-head">
-        <span class="owner-name">${owner}</span>
-        <span class="owner-total">${total} pts</span>
+function renderLB(){
+  const medals=['🥇','🥈','🥉','',''];
+  const sorted=Object.keys(DRAFT).map(o=>({o,total:oTot(o),mp:MATCHES.map((_,i)=>DRAFT[o].reduce((s,p)=>s+((PTS[p.p]||[])[i]||0),0))})).sort((a,b)=>b.total-a.total);
+  const maxMP=Math.max(...sorted.flatMap(r=>r.mp),1);
+  const mc=['#f5c518','#ff6b35','#ec4899','#6366f1'];
+  document.getElementById('lb').innerHTML=sorted.map((r,i)=>{
+    const bars=r.mp.map((v,mi)=>{const h=Math.max(2,Math.round((v/maxMP)*18));return`<div class="lb-bar" style="height:${h}px;background:${mc[mi]};opacity:${v>0?.8:.15}"></div>`}).join('');
+    return`<div class="lb-card r${i+1}" onclick="goTo('${r.o}')"><span class="lb-medal">${medals[i]||''}</span><div class="lb-rank">#${i+1} PLACE</div><div class="lb-name">${r.o}</div><div class="lb-pts">${r.total}</div><div class="lb-label">POINTS</div><div class="lb-bars">${bars}</div></div>`;
+  }).join('');
+}
+
+function goTo(o){document.getElementById('blk-'+o)?.scrollIntoView({behavior:'smooth',block:'start'})}
+
+function pCard(pl){
+  const pts=PTS[pl.p]||[],total=pts.reduce((s,v)=>s+v,0),tc=T[pl.t],u=img(pl.p);
+  const dots=MATCHES.map((m,i)=>{const v=pts[i]||0;return`<span class="mdot${v===0?' z':''}">${m}:${v}</span>`}).join('');
+  return`<div class="pcard" style="--tc:${tc?.c||'#444'}">
+    <div class="pimg">
+      ${u?`<img src="${u}" alt="${pl.p}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="fb" style="display:none">${ini(pl.p)}</div>`:`<div class="fb">${ini(pl.p)}</div>`}
+    </div>
+    <div class="pname">${pl.p}</div>
+    <div class="ptbadge">${tc?.a||pl.t}</div>
+    <div class="ptotal${total===0?' z':''}">${total>0?total:'—'}</div>
+    <div class="mdots">${dots}</div>
+  </div>`;
+}
+
+function pRow(pl){
+  const pts=PTS[pl.p]||[],total=pts.reduce((s,v)=>s+v,0),tc=T[pl.t],u=img(pl.p);
+  const cells=MATCHES.map((_,i)=>{const v=pts[i]||0;return`<td style="font-family:var(--fm);font-size:13px;color:${v>0?'#00e676':'var(--muted)'}">${v||'—'}</td>`}).join('');
+  return`<tr><td><div class="tcell"><div class="timg">${u?`<img src="${u}" alt="${pl.p}" loading="lazy" onerror="this.style.display='none'">`:''}</div><span style="font-size:13px;font-weight:500">${pl.p}</span></div></td><td><span style="font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:10px;border:1px solid ${tc?.c||'#444'};color:${tc?.c||'#888'}">${tc?.a||pl.t}</span></td>${cells}<td style="font-family:var(--fd);font-size:18px;${total>0?'background:linear-gradient(135deg,#f5c518,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent':'color:var(--muted)'}">${total||'—'}</td></tr>`;
+}
+
+function renderOwners(){
+  const sorted=Object.keys(DRAFT).map(o=>({o,t:oTot(o)})).sort((a,b)=>b.t-a.t);
+  const rm={};sorted.forEach((r,i)=>rm[r.o]=i+1);
+  document.getElementById('owners').innerHTML=Object.keys(DRAFT).map(owner=>{
+    const total=oTot(owner),rank=rm[owner],oc=OC[owner],isOpen=!col[owner];
+    const bc=['','b1','b2','b3','b4','b5'][rank]||'b5';
+    const gc=`<div class="pgrid">${DRAFT[owner].map(pCard).join('')}</div>`;
+    const tc=`<table class="ptable"${view==='table'?' style="display:table"':''}><thead><tr><th>Player</th><th>Team</th>${MATCHES.map(m=>`<th>${m}</th>`).join('')}<th>Total</th></tr></thead><tbody>${DRAFT[owner].map(pRow).join('')}</tbody></table>`;
+    return`<div class="owner-block" id="blk-${owner}">
+      <div class="owner-hd" onclick="tog('${owner}')">
+        <div class="oav" style="background:${oc.bg};color:${oc.fg}">${owner[0]}</div>
+        <div class="oinfo"><div class="oname">${owner}</div><div class="ometa">${DRAFT[owner].length} players · Rank #${rank}</div></div>
+        <div class="opts">${total}</div>
+        <div class="obadge ${bc}">#${rank}</div>
+        <span class="chev${isOpen?' o':''}">▼</span>
       </div>
-      <table>
-        <thead><tr><th>Player</th><th>Team</th><th>Match Breakdown</th><th>Total</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
+      <div id="ct-${owner}" style="${isOpen?'':'display:none'}">${view==='cards'?gc:tc}</div>
     </div>`;
   }).join('');
 }
 
-function exportXL() {
-  const wb = XLSX.utils.book_new();
-  const owners = Object.keys(DRAFT);
-  const header = [];
-  owners.forEach(o => header.push(o, 'IPL Team', ...MATCHES, 'Total'));
-  const rows = [header];
-
-  const maxLen = Math.max(...owners.map(o => DRAFT[o].length));
-  for (let i = 0; i < maxLen; i++) {
-    const row = [];
-    owners.forEach(o => {
-      const p = DRAFT[o][i];
-      if (p) {
-        const pts = PTS[p.player] || [];
-        const tot = pts.reduce((s,v)=>s+v,0);
-        row.push(`${p.player}`, p.team, ...(MATCHES.map((_,idx)=>pts[idx]||0)), tot);
-      } else {
-        row.push('', '', ...MATCHES.map(()=>''), '');
-      }
-    });
-    rows.push(row);
-  }
-
-  // Totals row
-  const totRow = [];
-  owners.forEach(o => {
-    const matchTotals = MATCHES.map((_,mi) =>
-      DRAFT[o].reduce((s,p) => s + ((PTS[p.player]||[])[mi]||0), 0)
-    );
-    const grandTotal = DRAFT[o].reduce((s,p) => s + getTotal(p.player), 0);
-    totRow.push('TOTAL', '', ...matchTotals, grandTotal);
-  });
-  rows.push(totRow);
-
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  const colCount = owners.length * (3 + MATCHES.length);
-  ws['!cols'] = Array(colCount).fill(null).map((_, i) => {
-    const mod = i % (3 + MATCHES.length);
-    return { wch: mod === 0 ? 26 : mod === 1 ? 24 : 11 };
-  });
-
-  XLSX.utils.book_append_sheet(wb, ws, 'Fantasy Points');
-  XLSX.writeFile(wb, `ipl_fantasy_draft_2026_updated_${new Date().toISOString().slice(0,10)}.xlsx`);
+function tog(o){
+  col[o]=!col[o];
+  const c=document.getElementById('ct-'+o),ch=document.querySelector(`#blk-${o} .chev`);
+  if(col[o]){c.style.display='none';ch.classList.remove('o')}else{c.style.display='';ch.classList.add('o');renderOwners()}
 }
 
-render();
+function setView(v){
+  view=v;
+  document.getElementById('vc').className='vbtn'+(v==='cards'?' on':'');
+  document.getElementById('vt').className='vbtn'+(v==='table'?' on':'');
+  renderOwners();
+}
+
+function exportXL(){
+  const wb=XLSX.utils.book_new(),owners=Object.keys(DRAFT);
+  const hdr=[];owners.forEach(o=>hdr.push(o,'Team',...MLABELS,'Total'));
+  const rows=[hdr];
+  const ml=Math.max(...owners.map(o=>DRAFT[o].length));
+  for(let i=0;i<ml;i++){const row=[];owners.forEach(o=>{const pl=DRAFT[o][i];if(pl){const p=PTS[pl.p]||[];row.push(pl.p,pl.t,...MATCHES.map((_,mi)=>p[mi]||0),p.reduce((s,v)=>s+v,0))}else row.push('','',...MATCHES.map(()=>''),'')});rows.push(row)}
+  const tr=[];owners.forEach(o=>{const mp=MATCHES.map((_,mi)=>DRAFT[o].reduce((s,pl)=>s+((PTS[pl.p]||[])[mi]||0),0));tr.push('TOTAL','/',...mp,oTot(o))});rows.push(tr);
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=Array(owners.length*(3+MATCHES.length)).fill(null).map((_,i)=>({wch:i%(3+MATCHES.length)===0?26:i%(3+MATCHES.length)===1?24:10}));
+  XLSX.utils.book_append_sheet(wb,ws,'Fantasy Points');
+  XLSX.writeFile(wb,`ipl_fantasy_2026_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+renderTeamBar();renderLB();renderOwners();
+// Fetch real player photos from Wikipedia API (CORS: * — works from any domain)
+fetchAllImages();
 </script>
 </body>
 </html>
