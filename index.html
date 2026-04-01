@@ -338,7 +338,7 @@ function goTo(o){document.getElementById('blk-'+o)?.scrollIntoView({behavior:'sm
 
 function pCard(pl){
   const pts=PTS[pl.p]||[],total=pts.reduce((s,v)=>s+v,0),tc=T[pl.t],u=img(pl.p);
-  const dots=MATCHES.map((m,i)=>{const v=pts[i]||0;return`<span class="mdot${v===0?' z':''}">${m}:${v}</span>`}).join('');
+  const dots=MATCHES.map((m,i)=>{const v=pts[i]||0;return v>0?`<span class="mdot">${m}:${v}</span>`:''}).join('');
   return`<div class="pcard" style="--tc:${tc?.c||'#444'}">
     <div class="pimg">
       ${u?`<img src="${u}" alt="${pl.p}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="fb" style="display:none">${ini(pl.p)}</div>`:`<div class="fb">${ini(pl.p)}</div>`}
