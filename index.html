@@ -152,14 +152,8 @@ footer{text-align:center;padding:28px 0 0;border-top:1px solid var(--border);mar
     </div>
     <div>
       <div class="hero-title">IPL FANTASY 2026</div>
-      <div class="hero-sub">Dream11 Points Tracker · 4 Matches Played</div>
+      <div class="hero-sub">Dream11 Points Tracker</div>
     </div>
-  </div>
-  <div class="hero-right">
-    <div class="mpill"><span class="d"></span>M1 · Mar 28 · RCB beat SRH</div>
-    <div class="mpill"><span class="d"></span>M2 · Mar 29 · MI beat KKR</div>
-    <div class="mpill"><span class="d"></span>M3 · Mar 30 · RR beat CSK</div>
-    <div class="mpill"><span class="d"></span>M4 · Mar 31 · PBKS beat GT</div>
   </div>
 </div>
 
@@ -269,29 +263,75 @@ async function fetchAllImages(){
 
 const img=n=>IMG_CACHE[n]||null;
 
-const MATCHES=["M1","M2","M3","M4"];
-const MLABELS=["M1 Mar28","M2 Mar29","M3 Mar30","M4 Mar31"];
-const PTS={
-  "Virat Kohli":[104,0,0,0],"Phil Salt":[30,0,0,0],"Rajat Patidar":[40,0,0,0],
-  "Krunal Pandya":[4,0,0,0],"Bhuvneshwar Kumar":[29,0,0,0],"Jacob Bethell":[4,0,0,0],
-  "Abhishek Sharma":[13,0,0,0],"Travis Head":[17,0,0,0],"Ishan Kishan":[110,0,0,0],
-  "Heinrich Klaasen":[39,0,0,0],"Harshal Patel":[2,0,0,0],
-  "Rohit Sharma":[0,108,0,0],"Hardik Pandya":[0,53,0,0],"Tilak Varma":[0,26,0,0],
-  "Suryakumar Yadav":[0,15,0,0],"Jasprit Bumrah":[0,4,0,0],"Trent Boult":[0,4,0,0],
-  "Finn Allen":[0,49,0,0],"Ajinkya Rahane":[0,92,0,0],"Cameron Green":[0,17,0,0],
-  "Angkrish Raghuvanshi":[0,73,0,0],"Sunil Narine":[0,29,0,0],"Varun Chakravarthy":[0,4,0,0],
-  "Vaibhav Suryavanshi":[0,0,78,0],"Jofra Archer":[0,0,54,0],"Ravindra Jadeja":[0,0,54,0],
-  "Yashasvi Jaiswal":[0,0,47,0],"Dhruv Jurel":[0,0,34,0],"Riyan Parag":[0,0,21,0],
-  "Shivam Dube":[0,0,12,0],"Sanju Samson":[0,0,10,0],"Ruturaj Gaikwad":[0,0,10,0],
-  "Noor Ahmad":[0,0,5,0],"Khaleel Ahmed":[0,0,4,0],"Ayush Mhatre":[0,0,2,0],
-  "Prasidh Krishna":[0,0,0,79],"Shubman Gill":[0,0,0,49],"Prabhsimran Singh":[0,0,0,48],
-  "Jos Buttler":[0,0,0,47],"Marco Jansen":[0,0,0,44],"Kagiso Rabada":[0,0,0,29],
-  "Yuzvendra Chahal":[0,0,0,29],"Washington Sundar":[0,0,0,25],"Shreyas Iyer":[0,0,0,25],
-  "Sai Sudharsan":[0,0,0,18],"Nehal Wadhera":[0,0,0,12],"Priyansh Arya":[0,0,0,12],
-  "Shashank Singh":[0,0,0,8],"Arshdeep Singh":[0,0,0,4],"Rashid Khan":[0,0,0,4],
-  "Mohammed Siraj":[0,0,0,4],"Marcus Stoinis":[0,0,0,2],
+const MATCHES = ["M1","M2","M3","M4","M5"];
+const MLABELS = ["M1 Mar28","M2 Mar29","M3 Mar30","M4 Mar31","M5 Apr1"];
+const PTS = {
+  "Virat Kohli":            [104,  0,  0,  0,  0],
+  "Phil Salt":              [ 30,  0,  0,  0,  0],
+  "Rajat Patidar":          [ 40,  0,  0,  0,  0],
+  "Krunal Pandya":          [  4,  0,  0,  0,  0],
+  "Bhuvneshwar Kumar":      [ 29,  0,  0,  0,  0],
+  "Jacob Bethell":          [  4,  0,  0,  0,  0],
+  "Abhishek Sharma":        [ 13,  0,  0,  0,  0],
+  "Travis Head":            [ 17,  0,  0,  0,  0],
+  "Ishan Kishan":           [110,  0,  0,  0,  0],
+  "Heinrich Klaasen":       [ 39,  0,  0,  0,  0],
+  "Harshal Patel":          [  2,  0,  0,  0,  0],
+  "Rohit Sharma":           [  0,108,  0,  0,  0],
+  "Hardik Pandya":          [  0, 53,  0,  0,  0],
+  "Tilak Varma":            [  0, 26,  0,  0,  0],
+  "Suryakumar Yadav":       [  0, 15,  0,  0,  0],
+  "Jasprit Bumrah":         [  0,  4,  0,  0,  0],
+  "Trent Boult":            [  0,  4,  0,  0,  0],
+  "Finn Allen":             [  0, 49,  0,  0,  0],
+  "Ajinkya Rahane":         [  0, 92,  0,  0,  0],
+  "Cameron Green":          [  0, 17,  0,  0,  0],
+  "Angkrish Raghuvanshi":   [  0, 73,  0,  0,  0],
+  "Sunil Narine":           [  0, 29,  0,  0,  0],
+  "Varun Chakravarthy":     [  0,  4,  0,  0,  0],
+  "Vaibhav Suryavanshi":    [  0,  0, 78,  0,  0],
+  "Jofra Archer":           [  0,  0, 54,  0,  0],
+  "Ravindra Jadeja":        [  0,  0, 54,  0,  0],
+  "Yashasvi Jaiswal":       [  0,  0, 47,  0,  0],
+  "Dhruv Jurel":            [  0,  0, 34,  0,  0],
+  "Riyan Parag":            [  0,  0, 21,  0,  0],
+  "Shivam Dube":            [  0,  0, 12,  0,  0],
+  "Sanju Samson":           [  0,  0, 10,  0,  0],
+  "Ruturaj Gaikwad":        [  0,  0, 10,  0,  0],
+  "Noor Ahmad":             [  0,  0,  5,  0,  0],
+  "Khaleel Ahmed":          [  0,  0,  4,  0,  0],
+  "Ayush Mhatre":           [  0,  0,  2,  0,  0],
+  "Prasidh Krishna":        [  0,  0,  0, 79,  0],
+  "Shubman Gill":           [  0,  0,  0, 49,  0],
+  "Prabhsimran Singh":      [  0,  0,  0, 48,  0],
+  "Jos Buttler":            [  0,  0,  0, 47,  0],
+  "Marco Jansen":           [  0,  0,  0, 44,  0],
+  "Kagiso Rabada":          [  0,  0,  0, 29,  0],
+  "Yuzvendra Chahal":       [  0,  0,  0, 29,  0],
+  "Washington Sundar":      [  0,  0,  0, 25,  0],
+  "Shreyas Iyer":           [  0,  0,  0, 25,  0],
+  "Sai Sudharsan":          [  0,  0,  0, 18,  0],
+  "Nehal Wadhera":          [  0,  0,  0, 12,  0],
+  "Priyansh Arya":          [  0,  0,  0, 12,  0],
+  "Shashank Singh":         [  0,  0,  0,  8,  0],
+  "Arshdeep Singh":         [  0,  0,  0,  4,  0],
+  "Rashid Khan":            [  0,  0,  0,  4,  0],
+  "Mohammed Siraj":         [  0,  0,  0,  4,  0],
+  "Marcus Stoinis":         [  0,  0,  0,  2,  0],
+  "Lungi Ngidi":            [  0,  0,  0,  0, 79],
+  "Tristan Stubbs":         [  0,  0,  0,  0, 56],
+  "Kuldeep Yadav":          [  0,  0,  0,  0, 54],
+  "Mitchell Marsh":         [  0,  0,  0,  0, 44],
+  "Axar Patel":             [  0,  0,  0,  0, 33],
+  "Mohammad Shami":         [  0,  0,  0,  0, 29],
+  "Nitish Rana":            [  0,  0,  0,  0, 20],
+  "Rishabh Pant":           [  0,  0,  0,  0, 18],
+  "Nicholas Pooran":        [  0,  0,  0,  0, 13],
+  "Ayush Badoni":           [  0,  0,  0,  0,  9],
+  "Avesh Khan":             [  0,  0,  0,  0,  4],
+  "Karun Nair":             [  0,  0,  0,  0,  4],
+  "KL Rahul":               [  0,  0,  0,  0,  2],
 };
-
 const DRAFT={
   "Vivek":[{p:"Rohit Sharma",t:"Mumbai Indians"},{p:"KL Rahul",t:"Delhi Capitals"},{p:"Ishan Kishan",t:"Sunrisers Hyderabad"},{p:"Arshdeep Singh",t:"Punjab Kings"},{p:"Mitchell Marsh",t:"Lucknow Super Giants"},{p:"Noor Ahmad",t:"Chennai Super Kings"},{p:"Prabhsimran Singh",t:"Punjab Kings"},{p:"Finn Allen",t:"Kolkata Knight Riders"},{p:"Marco Jansen",t:"Punjab Kings"},{p:"Rashid Khan",t:"Gujarat Titans"},{p:"Nitish Rana",t:"Delhi Capitals"},{p:"Lungi Ngidi",t:"Delhi Capitals"},{p:"Jofra Archer",t:"Rajasthan Royals"},{p:"Angkrish Raghuvanshi",t:"Kolkata Knight Riders"},{p:"Prashant Veer",t:"Chennai Super Kings"}],
   "Vedant":[{p:"Virat Kohli",t:"Royal Challengers Bengaluru"},{p:"Suryakumar Yadav",t:"Mumbai Indians"},{p:"Shubman Gill",t:"Gujarat Titans"},{p:"Nicholas Pooran",t:"Lucknow Super Giants"},{p:"Rajat Patidar",t:"Royal Challengers Bengaluru"},{p:"Jos Buttler",t:"Gujarat Titans"},{p:"Mohammed Siraj",t:"Gujarat Titans"},{p:"Priyansh Arya",t:"Punjab Kings"},{p:"Sunil Narine",t:"Kolkata Knight Riders"},{p:"Ajinkya Rahane",t:"Kolkata Knight Riders"},{p:"Khaleel Ahmed",t:"Chennai Super Kings"},{p:"Krunal Pandya",t:"Royal Challengers Bengaluru"},{p:"Yuzvendra Chahal",t:"Punjab Kings"},{p:"Ayush Badoni",t:"Lucknow Super Giants"},{p:"Prithvi Shaw",t:"Delhi Capitals"}],
