@@ -1,0 +1,65 @@
+name: Auto-Update IPL Fantasy Points
+
+on:
+  schedule:
+    # Runs every day at 6:00 AM, 2:00 PM, and 11:00 PM IST
+    # (IST = UTC+5:30, so: 00:30, 08:30, 17:30 UTC)
+    - cron: "30 0 * * *"
+    - cron: "30 8 * * *"
+    - cron: "30 17 * * *"
+  workflow_dispatch:        # Allow manual trigger from GitHub UI
+    inputs:
+      gameday:
+        description: "Override gameday ID (leave blank to auto-detect)"
+        required: false
+        default: ""
+
+jobs:
+  update-pts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # Needed to push commits
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run PTS updater
+        id: update
+        run: |
+          GAMEDAY="${{ github.event.inputs.gameday }}"
+          if [ -n "$GAMEDAY" ]; then
+            python update_pts.py --file index.html --gameday "$GAMEDAY"
+          else
+            python update_pts.py --file index.html
+          fi
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet index.html; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes to index.html"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "index.html has been updated"
+          fi
+
+      - name: Commit and push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          # Extract the gameday number from the file for the commit message
+          GAMEDAY_LINE=$(grep 'const MATCHES' index.html | head -1)
+          git commit -m "🏏 Auto-update IPL Fantasy points — ${GAMEDAY_LINE}"
+          git push
